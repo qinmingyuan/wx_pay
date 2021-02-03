@@ -2,7 +2,6 @@ require 'digest/md5'
 
 module WxPay
   module Sign
-
     SIGN_TYPE_MD5 = 'MD5'
     SIGN_TYPE_HMAC_SHA256 = 'HMAC-SHA256'
 
@@ -39,5 +38,6 @@ module WxPay
 
       generate(params, options[:sign_type] || SIGN_TYPE_MD5) == sign
     end
+
   end
 end
