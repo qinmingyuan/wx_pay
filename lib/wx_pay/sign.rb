@@ -2,10 +2,11 @@ require 'digest/md5'
 
 module WxPay
   module Sign
+    extend self
     SIGN_TYPE_MD5 = 'MD5'
     SIGN_TYPE_HMAC_SHA256 = 'HMAC-SHA256'
 
-    def self.generate(params, sign_type = SIGN_TYPE_MD5)
+    def generate(params, sign_type = SIGN_TYPE_MD5)
       key = params.delete(:key)
 
       new_key = params["key"] #after
@@ -26,7 +27,18 @@ module WxPay
       end
     end
 
-    def self.verify?(params, options = {})
+    def generate_sign(params)
+      str = [
+        params[:appId],
+        params[:timeStamp],
+        params[:nonceStr],
+        params[:package]
+      ].join("\n") + "\n"
+
+      Rsa.sign(str)
+    end
+
+    def verify?(params, options = {})
       return true if WxPay.sandbox_mode?
 
       params = params.dup

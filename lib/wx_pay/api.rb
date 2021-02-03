@@ -9,8 +9,8 @@ module WxPay
     extend self
 
     def execute(method, path, params, options = {})
-      options[:nonce_str] = SecureRandom.uuid.tr('-', '')
-      options[:timestamp] = Time.now.to_i
+      options[:nonce_str] ||= SecureRandom.uuid.tr('-', '')
+      options[:timestamp] ||= Time.now.to_i
       options[:signature] = sign_params(method, path, params, options)
 
       url = BASE + path
@@ -18,9 +18,20 @@ module WxPay
         headers: common_headers(params, options)
       }
       opts.merge! body: params.to_json if params.present?
-      binding.pry
-      r = HTTPX.request(method, url, **opts)
-      binding.pry
+      JSON.parse HTTPX.request(method, url, **opts).body
+    end
+
+    def generate_js_pay_req(params, options = {})
+      opts = {
+        appId: options[:appid],
+        package: "prepay_id=#{params.delete(:prepayid)}",
+        signType: 'RSA'
+      }
+      opts.merge! params
+      opts[:timeStamp] ||= Time.now.to_i.to_s
+      opts[:nonceStr] ||= SecureRandom.uuid.tr('-', '')
+      opts[:paySign] = WxPay::Sign.generate_sign(opts)
+      opts
     end
 
     def prepare_params(method, path, params, options)

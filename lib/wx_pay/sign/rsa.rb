@@ -19,11 +19,11 @@ module WxPay
           options[:nonce_str],
           body
         ].join("\n") + "\n"
-        binding.pry
-        sign(rsa2_key, str)
+
+        sign(str)
       end
 
-      def sign(key, string)
+      def sign(string, key = rsa2_key)
         digest = OpenSSL::Digest::SHA256.new
         pkey = OpenSSL::PKey::RSA.new(key)
         signature = pkey.sign(digest, string)

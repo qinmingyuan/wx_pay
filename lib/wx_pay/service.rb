@@ -11,7 +11,7 @@ module WxPay
     SANDBOX_GATEWAY_URL = 'https://api.mch.weixin.qq.com/sandboxnew'.freeze
     FRAUD_GATEWAY_URL = 'https://fraud.mch.weixin.qq.com'.freeze
 
-    def self.generate_authorize_url(redirect_uri, state = nil)
+    def generate_authorize_url(redirect_uri, state = nil)
       state ||= SecureRandom.hex 16
       "https://open.weixin.qq.com/connect/oauth2/authorize?appid=#{WxPay.appid}&redirect_uri=#{CGI::escape redirect_uri}&response_type=code&scope=snsapi_base&state=#{state}"
     end
