@@ -12,6 +12,16 @@ module WxPay
           method: 'GET',
           path: '/v3/pay/transactions/out-trade-no/{out_trade_no}',
           required: [:mchid, :out_trade_no]
+        },
+        invoke_refund: {
+          method: 'POST',
+          path: '/v3/refund/domestic/refunds',
+          required: [:out_refund_no, :amount]
+        },
+        refund_query: {
+          method: 'GET',
+          path: '/v3/refund/domestic/refunds/{out_refund_no}',
+          required: [:out_refund_no]
         }
       }.freeze
 

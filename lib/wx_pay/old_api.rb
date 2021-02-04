@@ -37,52 +37,6 @@ module WxPay
       params
     end
 
-    INVOKE_REFUND_REQUIRED_FIELDS = [:out_refund_no, :total_fee, :refund_fee, :op_user_id]
-    # out_trade_no 和 transaction_id 是二选一(必填)
-    def self.invoke_refund(params, options = {})
-      params = {
-                 appid: options.delete(:appid) || WxPay.appid,
-                 mch_id: options.delete(:mch_id) || WxPay.mch_id,
-                 key: options.delete(:key) || WxPay.key,
-                 nonce_str: SecureRandom.uuid.tr('-', ''),
-               }.merge(params)
-
-      params[:op_user_id] ||= params[:mch_id]
-
-      check_required_options(params, INVOKE_REFUND_REQUIRED_FIELDS)
-      warn("WxPay Warn: missing required option: out_trade_no or transaction_id must have one") if ([:out_trade_no, :transaction_id] & params.keys) == []
-
-      options = {
-                  ssl_client_cert: options.delete(:apiclient_cert) || WxPay.apiclient_cert,
-                  ssl_client_key: options.delete(:apiclient_key) || WxPay.apiclient_key,
-                  verify_ssl: OpenSSL::SSL::VERIFY_NONE
-                }.merge(options)
-
-      r = WxPay::Result.new(Hash.from_xml(invoke_remote("/secapi/pay/refund", make_payload(params), options)))
-
-      yield r if block_given?
-
-      r
-    end
-
-    REFUND_QUERY_REQUIRED_FIELDS = [:out_trade_no]
-    def self.refund_query(params, options = {})
-      params = {
-                 appid: options.delete(:appid) || WxPay.appid,
-                 mch_id: options.delete(:mch_id) || WxPay.mch_id,
-                 key: options.delete(:key) || WxPay.key,
-                 nonce_str: SecureRandom.uuid.tr('-', '')
-               }.merge(params)
-
-      check_required_options(params, ORDER_QUERY_REQUIRED_FIELDS)
-
-      r = WxPay::Result.new(Hash.from_xml(invoke_remote("/pay/refundquery", make_payload(params), options)))
-
-      yield r if block_given?
-
-      r
-    end
-
     INVOKE_TRANSFER_REQUIRED_FIELDS = [:partner_trade_no, :openid, :check_name, :amount, :desc, :spbill_create_ip]
     def self.invoke_transfer(params, options = {})
       params = {
