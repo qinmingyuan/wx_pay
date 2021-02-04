@@ -4,18 +4,13 @@ require 'wx_pay/service'
 require 'wx_pay/version'
 require 'openssl'
 require 'zeitwerk'
-loader = Zeitwerk::Loader.for_gem
-loader.setup # ready!
+require 'active_support/configurable'
+#loader = Zeitwerk::Loader.for_gem
+#loader.setup # ready!
 
 module WxPay
+  include ActiveSupport::Configurable
   extend self
-  @extra_rest_client_options = {}
-  @debug_mode = true
-  @sandbox_mode = false
-
-  attr_accessor :appid, :mch_id, :key, :appsecret, :extra_rest_client_options, :debug_mode
-  attr_accessor :sandbox_mode, :manual_get_sandbox_key
-  attr_reader :apiclient_cert, :apiclient_key
 
   def set_apiclient_by_pkcs12(str, pass)
     pkcs12 = OpenSSL::PKCS12.new(str, pass)
@@ -33,16 +28,17 @@ module WxPay
     @apiclient_key = OpenSSL::PKey::RSA.new(key)
   end
 
-  def debug_mode?
-    @debug_mode
-  end
-
-  def sandbox_mode?
-    @sandbox_mode
-  end
-
-  def manual_get_sandbox_key?
-    @manual_get_sandbox_key
+  configure do |config|
+    config.sandbox = false
+    config.pid = nil
+    config.appid = nil
+    config.target_id = nil
+    config.oauth_url = 'https://openauth.alipay.com/oauth2/appToAppAuth.htm'
+    config.oauth_callback = nil
+    config.return_url = nil
+    config.notify_url = nil
+    config.return_rsa = ''
+    config.rsa2_path = 'config/alipay_rsa2.pem'
   end
 
 end
