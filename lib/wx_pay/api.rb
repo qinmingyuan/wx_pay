@@ -24,6 +24,7 @@ module WxPay
       if method != 'GET'
         opts.merge! body: params.to_json
       end
+
       JSON.parse HTTPX.request(method, url, **opts).body
     end
 
