@@ -6,14 +6,14 @@ module WxPay
       extend self
 
       def generate(method, path, params, options = {})
-        if method.upcase == 'GET'
+        if method == 'GET'
           body = nil
         else
           body = params.to_json
         end
 
         str = [
-          method.upcase,
+          method,
           path,
           options[:timestamp],
           options[:nonce_str],

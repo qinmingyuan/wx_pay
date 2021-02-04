@@ -9,8 +9,9 @@ module WxPay
     extend self
 
     def execute(method, path, params, options = {})
+      method.upcase!
       path = Utils.replace(path, params)
-      path = Utils.query(path, params)
+      path = Utils.query(path, params) if method == 'GET'
 
       options[:nonce_str] ||= SecureRandom.uuid.tr('-', '')
       options[:timestamp] ||= Time.now.to_i
@@ -20,7 +21,7 @@ module WxPay
       opts = {
         headers: common_headers(params, options)
       }
-      if method.upcase != 'GET'
+      if method != 'GET'
         opts.merge! body: params.to_json
       end
       JSON.parse HTTPX.request(method, url, **opts).body
