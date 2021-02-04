@@ -7,6 +7,11 @@ module WxPay
           path: '/v3/pay/transactions/jsapi',
           required: [:appid, :mchid, :description, :out_trade_no, :notify_url, :amount, :payer],
           optional: [:time_expire, :attach, :goods_tag, :detail, :scene_info]
+        },
+        order_query: {
+          method: 'GET',
+          path: '/v3/pay/transactions/out-trade-no/{out_trade_no}',
+          required: [:mchid, :out_trade_no]
         }
       }.freeze
 

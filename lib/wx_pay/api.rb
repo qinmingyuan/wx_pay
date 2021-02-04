@@ -9,6 +9,9 @@ module WxPay
     extend self
 
     def execute(method, path, params, options = {})
+      path = Utils.replace(path, params)
+      path = Utils.query(path, params)
+
       options[:nonce_str] ||= SecureRandom.uuid.tr('-', '')
       options[:timestamp] ||= Time.now.to_i
       options[:signature] = sign_params(method, path, params, options)
@@ -17,7 +20,9 @@ module WxPay
       opts = {
         headers: common_headers(params, options)
       }
-      opts.merge! body: params.to_json if params.present?
+      if method.upcase != 'GET'
+        opts.merge! body: params.to_json
+      end
       JSON.parse HTTPX.request(method, url, **opts).body
     end
 
@@ -42,7 +47,7 @@ module WxPay
 
     def common_headers(params, options)
       r = {
-        mchid: options[:mch_id],
+        mchid: options[:mchid],
         serial_no: options[:serial_no],
         nonce_str: options[:nonce_str],
         timestamp: options[:timestamp],

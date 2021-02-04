@@ -1,22 +1,6 @@
 module WxPay
   module OldApi
-    INVOKE_UNIFIEDORDER_REQUIRED_FIELDS = []
-    def self.invoke_unifiedorder(params, options = {})
-      params = {
-                 appid: options.delete(:appid) || WxPay.appid,
-                 mch_id: options.delete(:mch_id) || WxPay.mch_id,
-                 key: options.delete(:key) || WxPay.key,
-                 nonce_str: SecureRandom.uuid.tr('-', '')
-               }.merge(params)
 
-      check_required_options(params, INVOKE_UNIFIEDORDER_REQUIRED_FIELDS)
-
-      r = WxPay::Result.new(Hash.from_xml(invoke_remote("/pay/unifiedorder", make_payload(params), options)))
-
-      yield r if block_given?
-
-      r
-    end
 
     INVOKE_CLOSEORDER_REQUIRED_FIELDS = [:out_trade_no]
     def self.invoke_closeorder(params, options = {})
@@ -258,24 +242,6 @@ module WxPay
                 }.merge(options)
 
       r = WxPay::Result.new(Hash.from_xml(invoke_remote("/pay/micropay", make_payload(params), options)))
-
-      yield r if block_given?
-
-      r
-    end
-
-    ORDER_QUERY_REQUIRED_FIELDS = [:out_trade_no]
-    def self.order_query(params, options = {})
-      params = {
-                 appid: options.delete(:appid) || WxPay.appid,
-                 mch_id: options.delete(:mch_id) || WxPay.mch_id,
-                 key: options.delete(:key) || WxPay.key,
-                 nonce_str: SecureRandom.uuid.tr('-', '')
-               }.merge(params)
-
-
-      r = WxPay::Result.new(Hash.from_xml(invoke_remote("/pay/orderquery", make_payload(params), options)))
-      check_required_options(params, ORDER_QUERY_REQUIRED_FIELDS)
 
       yield r if block_given?
 
