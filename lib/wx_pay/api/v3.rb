@@ -8,6 +8,12 @@ module WxPay
           required: [:appid, :mchid, :description, :out_trade_no, :notify_url, :amount, :payer],
           optional: [:time_expire, :attach, :goods_tag, :detail, :scene_info]
         },
+        h5_order: {
+          method: 'POST',
+          path: '/v3/pay/transactions/h5',
+          required: [:appid, :mchid, :description, :out_trade_no, :notify_url, :amount, :scene_info],
+          optional: [:time_expire, :attach, :goods_tag, :detail, :settle_info]
+        },
         order_query: {
           method: 'GET',
           path: '/v3/pay/transactions/out-trade-no/{out_trade_no}',
