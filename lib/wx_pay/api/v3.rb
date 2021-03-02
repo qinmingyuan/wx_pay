@@ -14,6 +14,12 @@ module WxPay
           required: [:appid, :mchid, :description, :out_trade_no, :notify_url, :amount, :scene_info],
           optional: [:time_expire, :attach, :goods_tag, :detail, :settle_info]
         },
+        native_order: {
+          method: 'POST',
+          path: '/v3/pay/transactions/native',
+          required: [:appid, :mchid, :description, :out_trade_no, :notify_url, :amount],
+          optional: [:time_expire, :attach, :goods_tag, :detail, :scene_info]
+        },
         order_query: {
           method: 'GET',
           path: '/v3/pay/transactions/out-trade-no/{out_trade_no}',
